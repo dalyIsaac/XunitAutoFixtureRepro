@@ -1,4 +1,6 @@
 using AutoFixture;
+using Newtonsoft.Json.Linq;
+using Objectivity.AutoFixture.XUnit2.AutoNSubstitute.Attributes;
 
 namespace XunitAutoFixtureRepro;
 
@@ -47,7 +49,8 @@ public class UnitTest1
             { "this is the second string with a much longer length", 51 }
         };
 
-    [Theory, MemberAutoSubstituteData<ExampleCustomization>(nameof(GetData))]
+    [Theory]
+    [MemberAutoSubstituteData<ExampleCustomization>(nameof(GetData))]
     public void TestWithAutoFixtureMember(string value, int length, Window window, Monitor monitor)
     {
         Assert.Equal(value.Length, length);
@@ -56,5 +59,31 @@ public class UnitTest1
         Assert.Equal(200, window.Width);
         Assert.Equal(100, monitor.Height);
         Assert.Equal(200, monitor.Width);
+    }
+
+    [Theory]
+    [MemberAutoSubstituteData<ExampleCustomization>(nameof(GetData))]
+    public void TestWithAutoFixtureMember2(string value, int length)
+    {
+        Assert.Equal(value.Length, length);
+    }
+
+
+    [Theory, MemberAutoSubstituteData(nameof(GetData))]
+    public void TestWithAutoFixtureMemberNoCustomization(string value, int length)
+    {
+        Assert.Equal(value.Length, length);
+    }
+
+    [Theory, InlineAutoMockData("hello")]
+    public void TestInlineWithAccenture(string value, Window window)
+    {
+        Assert.Equal("hello", value);
+    }
+
+    [Theory, MemberAutoMockData(nameof(GetData))]
+    public void TestMemberWithAccenture(string value, int length, Window window)
+    {
+        Assert.Equal(value.Length, length);
     }
 }
